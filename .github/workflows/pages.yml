@@ -28,6 +28,28 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Stamp last updated date
+        run: |
+          python3 - <<'PY'
+          import re
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          page = Path("banned-words.html")
+          date = datetime.now(timezone.utc)
+          stamp = f"{date.strftime('%B')} {date.day}, {date.year}"
+          text = page.read_text(encoding="utf-8")
+          text, count = re.subn(
+              r'Last updated <span id="lastUpdated">.*?</span>\.',
+              f'Last updated <span id="lastUpdated">{stamp}</span>.',
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("Could not stamp last updated date")
+          page.write_text(text, encoding="utf-8")
+          PY
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
