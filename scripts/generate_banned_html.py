@@ -1,71 +1,151 @@
 #!/usr/bin/env python3
 """
-Generate a static `banned-words.html` file from `banned-words.js`.
+Regenerate `banned-words.html`.
 
-Usage:
-  python3 scripts/generate_banned_html.py
-
-This script extracts the JS array from `banned-words.js`, then writes
-an HTML file that contains the same table as the dynamic page. This is
-useful when you want a pre-rendered, distributable `banned-words.html`.
+The checked-in page intentionally loads `banned-words.js` at runtime so the
+word list has one canonical source. This script validates that the list can be
+parsed, then rewrites the page shell without embedding hundreds of duplicate
+table rows.
 """
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BANNED_JS = ROOT / 'banned-words.js'
-OUT_HTML = ROOT / 'banned-words.html'
+BANNED_JS = ROOT / "banned-words.js"
+OUT_HTML = ROOT / "banned-words.html"
+
 
 def read_banned_words():
-    txt = BANNED_JS.read_text(encoding='utf-8')
-    m = re.search(r"window\.BANNED_WORDS\s*=\s*\[([\s\S]*?)\];", txt)
-    if not m:
-        raise SystemExit('Could not find window.BANNED_WORDS array in banned-words.js')
-    array_text = m.group(1)
-    # Find all double-quoted strings. This is robust enough for this file.
-    words = re.findall(r'"([^"]*)"', array_text)
-    return words
+    text = BANNED_JS.read_text(encoding="utf-8")
+    match = re.search(r"window\.BANNED_WORDS\s*=\s*\[([\s\S]*?)\];", text)
+    if not match:
+        raise SystemExit("Could not find window.BANNED_WORDS array in banned-words.js")
+    return re.findall(r'"((?:\\.|[^"\\])*)"', match.group(1))
 
-TEMPLATE_HEAD = '''<!DOCTYPE html>
+
+HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banned Words List</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #7a1519; color: white; text-align: center; }
-    .container { max-width: 800px; margin: 40px auto; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; background: white; color: black; margin-top: 20px; }
-    th, td { border: 1px solid black; padding: 10px; }
-    a { color: #ffcc00; text-decoration: none; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #7a1519;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+    }
+
+    nav a {
+      color: #ffcc00;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+    nav a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    nav {
+      margin-bottom: 20px;
+    }
+    a {
+      color: #ffcc00;
+      text-decoration: none;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="banned-words.html">Banned Words List</a>
-    <a href="replacer.html">Replacer Tool</a>
-  </nav>
-  <h2>Banned Words List</h2>
-  <table>
-    <thead><tr><th>Banned Words</th></tr></thead>
-    <tbody id="bannedWordsBody">
-'''
 
-TEMPLATE_TAIL = '''
-    </tbody>
+<div class="container">
+<nav>
+  <a href="index.html">Home</a>
+  <a href="banned-words.html">Banned Words List</a>
+  <a href="replacer.html">Replacer Tool</a>
+</nav>
+
+
+  <h2>Banned Words List</h2>
+  <p>This list includes approximately 1,000 words and phrases that will, apparently, result in a grant (or other document, webpage, etc.) being flagged for additional scrutiny by NSF, NIH, and other federal agencies according to a variety of sources: a 2025 Washington Post
+    <a href="https://www.washingtonpost.com/science/2025/02/04/national-science-foundation-trump-executive-orders-words/" target="_blank">article</a>, a viral
+    <a href="https://bsky.app/profile/jfmclaughlin92.bsky.social/post/3lhd4eswp322v" target="_blank">post</a>
+    on Bluesky, another viral
+    <a href="https://bsky.app/profile/alerigolon.bsky.social/post/3lhtzz5kfqs2y" target="_blank">post specific to US DOT grants</a>, a 2025 New York Times
+    <a href="https://www.nytimes.com/interactive/2025/03/07/us/trump-federal-agencies-websites-words-dei.html" target="_blank">article</a>, a 2025
+    <a href="https://pen.org/banned-words-list/" target="_blank">PEN America write-up</a>,
+    <a href="https://gizmodo.com/cdc-ordered-to-scrub-website-of-words-like-transgender-and-lgbt-2000557177" target="_blank">two</a>
+    <a href="https://gizmodo.com/the-list-of-trumps-forbidden-words-that-will-get-your-paper-flagged-at-nsf-2000559661" target="_blank">articles</a> in Gizmodo, a 2025 leaked
+    <a href="https://x.com/MorePerfectUS/status/1906358812291813719" target="_blank">memo</a>
+      from the USDA reported on by
+    <a href="https://grist.org/food-and-agriculture/usda-unfreezing-clean-energy-money-dei-climate/" target="_blank">Grist</a>,
+
+    and Appendix B in a report by the
+    <a href="https://www.commerce.senate.gov/services/files/4BD2D522-2092-4246-91A5-58EEF99750BC" target="_blank">U.S. Senate Committee on Commerce, Science and Transportation</a>.
+    Please let me know if I'm missing anything. Last updated December, 2025.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Banned Words</th>
+      </tr>
+    </thead>
+    <tbody id="bannedWordsBody"></tbody>
   </table>
 </div>
+
+<!-- Load the canonical shared list and render the table at runtime. -->
+<script src="banned-words.js"></script>
+<script>
+  (function(){
+    function render() {
+      const list = window.BANNED_WORDS || [];
+      const tbody = document.getElementById('bannedWordsBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      list.forEach(word => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.textContent = word;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', render);
+    } else {
+      render();
+    }
+  })();
+</script>
 </body>
 </html>
-'''
+"""
+
 
 def main():
     words = read_banned_words()
-    rows = '\n'.join(f'      <tr><td>{w}</td></tr>' for w in words)
-    OUT_HTML.write_text(TEMPLATE_HEAD + rows + TEMPLATE_TAIL, encoding='utf-8')
-    print(f'Wrote {OUT_HTML} ({len(words)} words)')
+    OUT_HTML.write_text(HTML, encoding="utf-8")
+    print(f"Wrote {OUT_HTML} shell; banned-words.js has {len(words)} entries")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

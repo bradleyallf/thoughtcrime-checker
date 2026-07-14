@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 import re
 from pathlib import Path
-p = Path('banned-words.js')
-s = p.read_text(encoding='utf-8')
-# Find all single- or double-quoted strings inside the file
-# Use a simpler pattern because the list entries do not contain embedded escaped quotes
-items = re.findall(r'"([^\"]*)"|\'([^\']*)\'', s)
+
+ROOT = Path(__file__).resolve().parents[1]
+BANNED_JS = ROOT / "banned-words.js"
+BACKUP = ROOT / "banned-words.js.bak"
+
+text = BANNED_JS.read_text(encoding="utf-8")
+match = re.search(r"window\.BANNED_WORDS\s*=\s*\[([\s\S]*?)\];", text)
+if not match:
+    raise SystemExit("Could not find window.BANNED_WORDS array in banned-words.js")
+
+items = re.findall(r'"((?:\\.|[^"\\])*)"|\'((?:\\.|[^\'\\])*)\'', match.group(1))
 words = [a or b for (a, b) in items]
-words = [w for w in words if w.strip()]
-# Build normalized content
-out = ['window.BANNED_WORDS = [']
-for i, w in enumerate(words):
-    escaped = w.replace('\\', '\\\\').replace('"', '\\"')
-    comma = ',' if i < len(words) - 1 else ''
-    out.append(f'  "{escaped}"{comma}')
-out.append('];')
-out_text = '\n'.join(out) + '\n'
-# Backup original
-bak = p.with_suffix('.js.bak')
-bak.write_text(s, encoding='utf-8')
-# Write normalized file
-p.write_text(out_text, encoding='utf-8')
-print(f'Wrote {p} with {len(words)} entries; backup at {bak}')
+words = [word.strip() for word in words if word.strip()]
+
+output = ["window.BANNED_WORDS = ["]
+for index, word in enumerate(words):
+    escaped = word.replace("\\", "\\\\").replace('"', '\\"')
+    comma = "," if index < len(words) - 1 else ""
+    output.append(f'  "{escaped}"{comma}')
+output.append("];")
+output_text = "\n".join(output) + "\n"
+
+BACKUP.write_text(text, encoding="utf-8")
+BANNED_JS.write_text(output_text, encoding="utf-8")
+print(f"Wrote {BANNED_JS} with {len(words)} entries; backup at {BACKUP}")
