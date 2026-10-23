@@ -1,6 +1,5 @@
 window.BANNED_WORDS = [
   "abortion",
-  "abortion",
   "accessibility",
   "accessible",
   "activism",
@@ -99,7 +98,6 @@ window.BANNED_WORDS = [
   "black thought",
   "black voices",
   "black women",
-  "black",
   "blackness",
   "breastfeeding people",
   "breastfeeding person",
