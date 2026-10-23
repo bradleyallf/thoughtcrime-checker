@@ -14,6 +14,15 @@ if not match:
 items = re.findall(r'"((?:\\.|[^"\\])*)"|\'((?:\\.|[^\'\\])*)\'', match.group(1))
 words = [a or b for (a, b) in items]
 words = [word.strip() for word in words if word.strip()]
+seen = set()
+unique_words = []
+for word in words:
+    key = word.casefold()
+    if key not in seen:
+        seen.add(key)
+        unique_words.append(word)
+removed = len(words) - len(unique_words)
+words = unique_words
 
 output = ["window.BANNED_WORDS = ["]
 for index, word in enumerate(words):
@@ -25,4 +34,4 @@ output_text = "\n".join(output) + "\n"
 
 BACKUP.write_text(text, encoding="utf-8")
 BANNED_JS.write_text(output_text, encoding="utf-8")
-print(f"Wrote {BANNED_JS} with {len(words)} entries; backup at {BACKUP}")
+print(f"Wrote {BANNED_JS} with {len(words)} entries; removed {removed} duplicates; backup at {BACKUP}")
