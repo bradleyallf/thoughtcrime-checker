@@ -42,7 +42,8 @@ Deployment is handled by GitHub Actions in `.github/workflows/pages.yml`, which 
 All three webpages use Cloudflare Web Analytics to measure visits, page views,
 and page performance. Text entered into the checker or replacer is processed
 locally in the browser and is not sent to Cloudflare or our servers. No custom
-analytics events capture editor input.
+analytics events capture editor input. The site does not collect entered text,
+flagged words, replacement output, keystrokes, or session recordings.
 
 The public site token is embedded in the beacon snippet before `</body>` in
 `index.html`, `replacer.html`, and `banned-words.html`. The word-list generator

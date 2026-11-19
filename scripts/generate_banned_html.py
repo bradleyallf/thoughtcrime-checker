@@ -135,7 +135,7 @@ HTML = """<!DOCTYPE html>
     }
   })();
 </script>
-<p style="text-align:center; font-size:14px;">Privacy: Text entered in the tools is processed in your browser and is not sent to our servers or Cloudflare. This site uses <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> to measure visits, page views, and page performance.</p>
+<p style="text-align:center; font-size:14px;">Privacy: <strong>Your text stays in your browser.</strong> We do not collect, save, or transmit anything you type or paste into these tools, including the words flagged or the replacements generated. We do not record keystrokes or sessions. We use <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> for anonymous traffic statistics, such as visit counts, page views, and page performance, so we can understand how many visits the site receives. These statistics do not include your text.</p>
 <!-- Cloudflare Web Analytics -->
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b4573c6c7bd04f1dafb7db084dab1ea2"}'></script>
 <!-- End Cloudflare Web Analytics -->
