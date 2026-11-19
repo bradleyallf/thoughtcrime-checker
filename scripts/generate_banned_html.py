@@ -90,8 +90,9 @@ HTML = """<!DOCTYPE html>
     <a href="https://bsky.app/profile/jfmclaughlin92.bsky.social/post/3lhd4eswp322v" target="_blank">post</a>
     on Bluesky, another viral
     <a href="https://bsky.app/profile/alerigolon.bsky.social/post/3lhtzz5kfqs2y" target="_blank">post specific to US DOT grants</a>, a 2025 New York Times
-    <a href="https://www.nytimes.com/interactive/2025/03/07/us/trump-federal-agencies-websites-words-dei.html" target="_blank">article</a>, a 2025
-    <a href="https://pen.org/banned-words-list/" target="_blank">PEN America write-up</a>,
+    <a href="https://www.nytimes.com/interactive/2025/03/07/us/trump-federal-agencies-websites-words-dei.html" target="_blank">article</a>,
+    <a href="https://pen.org/banned-words-list/" target="_blank">PEN America's compiled list of words and phrases banned or flagged for review by federal agencies</a>
+    (updated November 11, 2026),
     <a href="https://gizmodo.com/cdc-ordered-to-scrub-website-of-words-like-transgender-and-lgbt-2000557177" target="_blank">two</a>
     <a href="https://gizmodo.com/the-list-of-trumps-forbidden-words-that-will-get-your-paper-flagged-at-nsf-2000559661" target="_blank">articles</a> in Gizmodo, a leaked 2025 USDA Agricultural Research Service
     <a href="https://x.com/MorePerfectUS/status/1906358812291813719" target="_blank">memo</a> first published by More Perfect Union and
